@@ -3,7 +3,9 @@
  * Só as constantes de cálculo foram movidas para ./rules.ts para poderem ser testadas. */
 import { P_MES, P_CICLO, NUC_BONUS, NUC_BONUS1, TH, VAL, LV, FAIXA, band, nucB, comm, PB, PL } from "./rules";
 
-export function initSimulador() {
+/* `store`: adaptador de persistência (./persistence.ts), mesma API do `ls` original + del/flush.
+ * Sem store, o engine usa o localStorage como no arquivo original. */
+export function initSimulador(store) {
 
 const $=id=>document.getElementById(id);
 const MOD=['Presencial','Semipresencial','Ao vivo','EAD'],MODV=[...MOD,'Med. Vet. / Odonto'];
@@ -16,7 +18,7 @@ const f=n=>(+n).toLocaleString('pt-BR',{maximumFractionDigits:1});
 const pc=n=>Math.round(n)+'%';
 const v=id=>Math.max(0,+$(id).value||0);
 const brl=n=>'R$ '+(+n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,x){try{localStorage.setItem(k,x)}catch(e){}}};
+const ls=store||{get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,x){try{localStorage.setItem(k,x)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}},flush(){return Promise.resolve()}};
 
 /* ===== Regra de cálculo (inalterada) + regra de pagamento ===== */
 /* Regras de cálculo em ./rules.ts (PGE.05.235 e PGE.05.008) */
@@ -385,8 +387,8 @@ document.addEventListener('pointerdown',()=>ac(),{once:true});
 
 /* ===== Salvar ===== */
 const KEY='simulador-consultor-meta-v3';
-function save(){try{const o={};document.querySelectorAll('input[id]:not([type=range]):not([type=file]):not(#sal):not([id^=ob]):not(#apNote),select[id]').forEach(e=>{o[e.id]=e.value});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
-function restore(){try{const raw=localStorage.getItem(KEY);if(!raw)return;const o=JSON.parse(raw);Object.keys(o).forEach(id=>{const e=$(id);if(e&&e.type!=='file'){try{e.value=o[id]}catch(x){}}})}catch(e){}}
+function save(){try{const o={};document.querySelectorAll('input[id]:not([type=range]):not([type=file]):not(#sal):not([id^=ob]):not(#apNote),select[id]').forEach(e=>{o[e.id]=e.value});ls.set(KEY,JSON.stringify(o))}catch(e){}}
+function restore(){try{const raw=ls.get(KEY);if(!raw)return;const o=JSON.parse(raw);Object.keys(o).forEach(id=>{const e=$(id);if(e&&e.type!=='file'){try{e.value=o[id]}catch(x){}}})}catch(e){}}
 /* Avatar */
 const AVS=['ini','🦫','🦈','🐯','🦁','🐆','🐺','🦊','🦅','🐬','🐳','🐙','🐻','🐼','🐨','🦉','🐧','🦒','🐘','🐎','🦖','🐲','🐝','🦄','🦋','🐸','🌸','🌻','🌟','⚡','🔥','💎','👑','🚀','🎯'];
 function getFoto(){return ls.get('sim-avatar')==='foto'?ls.get('sim-foto'):null}
@@ -394,11 +396,11 @@ function paintAv(ini){const avs=ls.get('sim-avatar')||'ini',ft=getFoto(),av=$('a
   if(ft){av.textContent='';av.style.backgroundImage=`url(${ft})`;av.classList.add('photo');av.classList.remove('ini');hb.style.backgroundImage=`url(${ft})`;hb.hidden=false;return}
   av.style.backgroundImage='';av.classList.remove('photo');hb.hidden=true;const useIni=avs==='ini'||avs==='foto';av.textContent=useIni?(ini||'🦫'):avs;av.classList.toggle('ini',useIni&&!!ini)}
 $('avPhotoBtn').addEventListener('click',e=>{e.stopPropagation();$('avFile').click()});
-$('avPhotoRm').addEventListener('click',e=>{e.stopPropagation();try{localStorage.removeItem('sim-foto')}catch(x){}ls.set('sim-avatar','ini');$('avpick').hidden=true;document.querySelector('.hero').classList.remove('pick');calc()});
+$('avPhotoRm').addEventListener('click',e=>{e.stopPropagation();ls.del('sim-foto');ls.set('sim-avatar','ini');$('avpick').hidden=true;document.querySelector('.hero').classList.remove('pick');calc()});
 $('avFile').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();
   rd.onload=()=>{const img=new Image();img.onload=()=>{const S2=256,c=document.createElement('canvas');c.width=c.height=S2;const x=c.getContext('2d'),m=Math.min(img.width,img.height);
     x.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S2,S2);let url;try{url=c.toDataURL('image/jpeg',.82)}catch(er){toast('Não foi possível usar essa foto.');return}
-    try{localStorage.setItem('sim-foto',url)}catch(er){toast('Foto grande demais para salvar. Tente outra.');return}
+    try{ls.set('sim-foto',url)}catch(er){toast('Foto grande demais para salvar. Tente outra.');return}
     ls.set('sim-avatar','foto');$('avpick').hidden=true;document.querySelector('.hero').classList.remove('pick');calc();blip();toast('📸 Foto de jogador atualizada!')};
     img.onerror=()=>toast('Não foi possível abrir essa imagem.');img.src=rd.result};rd.readAsDataURL(f);e.target.value=''});
 function drawAv(){$('avPhotoRm').hidden=!ls.get('sim-foto');const cur=ls.get('sim-avatar')||'ini',nm=$('nome').value.trim(),ini=nm?nm.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase():'Aa';
@@ -416,10 +418,10 @@ $('zerar').addEventListener('click',()=>{const z=$('zerar');
   $('fill').open=true;calc();save();
   document.querySelectorAll('input[id]').forEach(e=>{if(isR(e.id))snapV[e.id]=0});snapMoney=S.money;
   toast('🔄 Números zerados. Novo jogo, '+($('nome').value.trim().split(' ')[0]||'jogador')+'!')});
-$('reset').addEventListener('click',()=>{try{localStorage.removeItem(KEY);localStorage.removeItem('sim-dia');localStorage.removeItem('sim-sem');localStorage.removeItem('sim-hist');localStorage.removeItem('sim-onb');localStorage.removeItem('sim-foto');localStorage.removeItem('sim-avatar')}catch(e){}location.reload()});
+$('reset').addEventListener('click',()=>{[KEY,'sim-dia','sim-sem','sim-hist','sim-onb','sim-foto','sim-avatar'].forEach(k=>ls.del(k));Promise.resolve(ls.flush()).finally(()=>location.reload())});
 
 function applyUrl(){try{const q=new URLSearchParams(location.search);let ch=false;const n=q.get('nucleo');
-  if(n&&[...$('nucSel').options].some(o=>o.value===n)){$('nucSel').value=n;ch=true}
+  if(n&&!$('nucSel').disabled&&[...$('nucSel').options].some(o=>o.value===n)){$('nucSel').value=n;ch=true}
   ['nm','nr'].forEach(k=>{const x=q.get(k);if(x!==null&&!isNaN(+x)){$(k).value=Math.max(0,+x);ch=true}});
   if(ch){save();setTimeout(()=>toast('🏢 Números do núcleo '+($('nucSel').value||'')+' carregados pelo link'),700)}}catch(e){}}
 restore();
@@ -427,7 +429,7 @@ restore();
 function bizDays(){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),last=new Date(y,m+1,0).getDate();let t=0,el=0;for(let d=1;d<=last;d++){const w=new Date(y,m,d).getDay();if(w&&w<6){t++;if(d<=n.getDate())el++}}return[t,el]}
 (()=>{const last=ls.get('sim-mes');let virou=false;
   if(last&&last!==MKEY){document.querySelectorAll('input[id]').forEach(e=>{if(/^[mr]\d+$/.test(e.id))e.value=0});['nm','nr','pend'].forEach(k=>{$(k).value=0});
-    ls.set('sim-dia',JSON.stringify({date:today,n:0}));try{localStorage.removeItem('sim-sem')}catch(e){}virou=true}
+    ls.set('sim-dia',JSON.stringify({date:today,n:0}));ls.del('sim-sem');virou=true}
   ls.set('sim-mes',MKEY);
   if(ls.get('sim-cal')!==MKEY){const[t,el]=bizDays();$('du').value=t;$('dec').value=el}
   save();
@@ -471,4 +473,5 @@ if([0,1,2,3,7,8].some(i=>v('m'+i)>0))$('fill').open=false;
 calc();
 document.querySelectorAll('input[id]').forEach(e=>{if(isR(e.id))snapV[e.id]=v(e.id)});snapMoney=S.money;
 
+return {toast};
 }

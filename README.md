@@ -28,7 +28,17 @@ Regras (PGE.05.235):
 
 Funcionalidades: tutorial de primeiro acesso, avatar com foto ou emoji, seletor dos 11 núcleos, painéis Graduação/Pós/Núcleo com botões +1, som de caixa registradora, chuva de dólares ao subir de nível, missões em R$, Radar do ganho, resumo 1:1 para WhatsApp, zerar números e virada automática do mês.
 
-Dados salvos só no aparelho do usuário (localStorage), sem login e sem banco de dados.
+## Login, banco e papéis
+
+O app usa um **Supabase próprio** (não o Lovable Cloud). URL e chave publicável ficam em `src/lib/supabase-config.ts` (podem ser sobrescritas por `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY`). Esquema, RLS e triggers já estão no banco; o app não cria nem altera tabelas.
+
+- **Conta:** `/login`, `/cadastro` (nome, e-mail, senha, núcleo), `/recuperar-senha` e `/nova-senha`. Só e-mails @estacio.br e @yduqs.com.br, com confirmação por e-mail. A página `/` exige login.
+- **Persistência:** `src/simulador/persistence.ts` substitui o localStorage do engine. Metas, realizados, histórico e notas do 1:1 vão para `simulador_estado` (uma linha por mês, privada do consultor), com gravação ~1 s depois da última alteração e cópia offline no aparelho. A cada gravação, `src/simulador/resumo.ts` recalcula o resumo com `rules.ts` e grava em `simulador_resumo`. O salário-base nunca é gravado.
+- **Perfil:** nome, núcleo, avatar e onboarding ficam em `profiles`; a foto vai para o bucket privado `avatars`. O consultor define o núcleo uma vez; depois só um admin troca.
+- **Migração:** na primeira entrada, os dados antigos do aparelho (versão sem login) são importados para a conta (BH 1 → BH - Central, BH 2 → BH - Metropolitano).
+- **Papéis:** `consultor` (todos), `gestor` (vê em `/equipe` o resumo dos consultores dos seus núcleos, nunca o estado nem as notas) e `admin` (`/admin`: papéis, núcleos dos gestores e correção de núcleo).
+
+Pendências no painel do Supabase (Authentication): Site URL e Redirect URLs com o domínio publicado (e `http://localhost:*` para desenvolvimento), SMTP próprio e, se quiser, modelos de e-mail em português.
 
 Paleta: #ffffff, #009abf, #1baebe, #262a4d, #000000. Manter o aviso legal do rodapé exatamente como no arquivo.
 

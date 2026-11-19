@@ -1,0 +1,423 @@
+/* Telas de conta, equipe e admin. CSS próprio (sem preflight do Tailwind), paleta do simulador. */
+.ax {
+  --ax-white: #ffffff;
+  --ax-cyan: #009abf;
+  --ax-teal: #1baebe;
+  --ax-indigo: #262a4d;
+  --ax-black: #000000;
+  --ax-mut: #5b6080;
+  --ax-line: #dfe3ee;
+  --ax-bg: #f3f6fa;
+  --ax-err: #b3261e;
+  --ax-ok: #0f7a55;
+  box-sizing: border-box;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--ax-bg);
+  color: var(--ax-indigo);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+}
+body:has(> * > .ax),
+body:has(> * > .ax-bar),
+body:has(> .ax) {
+  margin: 0;
+}
+.ax *,
+.ax *::before,
+.ax *::after {
+  box-sizing: inherit;
+}
+.ax a {
+  color: var(--ax-cyan);
+  font-weight: 600;
+}
+.ax h1,
+.ax h2,
+.ax h3,
+.ax p {
+  margin: 0;
+}
+.ax-auth {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px 48px;
+  background: linear-gradient(170deg, var(--ax-indigo) 0 240px, var(--ax-bg) 240px);
+}
+.ax-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--ax-white);
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(38, 42, 77, 0.18);
+  padding: 24px 20px;
+}
+.ax-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ax-brand span {
+  font-size: 30px;
+}
+.ax-brand small {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ax-teal);
+  font-weight: 700;
+}
+.ax-brand b {
+  font-size: 17px;
+}
+.ax-card h1 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.ax-sub {
+  color: var(--ax-mut);
+  margin-bottom: 18px !important;
+}
+.ax-form {
+  display: grid;
+  gap: 12px;
+}
+.ax-field {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ax-input,
+.ax-select {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ax-black);
+  background: var(--ax-white);
+  border: 1.5px solid var(--ax-line);
+  border-radius: 10px;
+  padding: 11px 12px;
+  outline: none;
+}
+.ax-input:focus,
+.ax-select:focus {
+  border-color: var(--ax-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 154, 191, 0.18);
+}
+.ax-select:disabled {
+  background: var(--ax-bg);
+  color: var(--ax-mut);
+}
+.ax-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  color: var(--ax-white);
+  background: linear-gradient(135deg, var(--ax-cyan), var(--ax-teal));
+  text-decoration: none;
+}
+.ax a.ax-btn {
+  color: var(--ax-white);
+}
+.ax-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.ax-btn.ghost,
+.ax a.ax-btn.ghost {
+  color: var(--ax-indigo);
+  background: var(--ax-white);
+  border: 1.5px solid var(--ax-line);
+}
+.ax-btn.sm {
+  padding: 7px 11px;
+  font-size: 13px;
+}
+.ax-msg {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.ax-msg.err {
+  background: #fdecea;
+  color: var(--ax-err);
+}
+.ax-msg.ok {
+  background: #e6f6ef;
+  color: var(--ax-ok);
+}
+.ax-msg.info {
+  background: #e5f5f9;
+  color: var(--ax-indigo);
+}
+.ax-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.ax-legal {
+  margin-top: 16px !important;
+  font-size: 12px;
+  color: var(--ax-mut);
+}
+
+/* Barra discreta acima do simulador */
+.ax-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 6px 16px;
+  background: #262a4d;
+  color: #c9cde4;
+  font:
+    12px/1.4 system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
+.ax-bar .who {
+  margin-right: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 55vw;
+}
+.ax-bar a,
+.ax-bar button {
+  color: #ffffff;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.ax-bar a:hover,
+.ax-bar button:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Painéis */
+.ax-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+.ax-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.ax-head h1 {
+  font-size: 21px;
+  margin-right: auto;
+}
+.ax-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.ax-tools .ax-select {
+  width: auto;
+  font-size: 14px;
+  padding: 8px 10px;
+}
+.ax-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+@media (min-width: 720px) {
+  .ax-kpis {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+.ax-kpi {
+  background: var(--ax-white);
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--ax-line);
+}
+.ax-kpi small {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ax-mut);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.ax-kpi b {
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.ax-box {
+  background: var(--ax-white);
+  border: 1px solid var(--ax-line);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.ax-box h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.ax-tablewrap {
+  overflow-x: auto;
+  background: var(--ax-white);
+  border: 1px solid var(--ax-line);
+  border-radius: 14px;
+}
+.ax-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.ax-table th,
+.ax-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--ax-line);
+  text-align: right;
+  white-space: nowrap;
+}
+.ax-table th.l,
+.ax-table td.l {
+  text-align: left;
+}
+.ax-table th {
+  background: var(--ax-indigo);
+  color: var(--ax-white);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ax-table th button {
+  all: unset;
+  cursor: pointer;
+}
+.ax-table th button:focus-visible {
+  outline: 2px solid var(--ax-teal);
+}
+.ax-table tr:last-child td {
+  border-bottom: 0;
+}
+.ax-table td.name {
+  font-weight: 600;
+  white-space: normal;
+  min-width: 140px;
+}
+.ax-table td.name small {
+  display: block;
+  font-weight: 400;
+  color: var(--ax-mut);
+}
+.ax-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e5f5f9;
+  color: var(--ax-indigo);
+  font-size: 12px;
+  font-weight: 600;
+}
+.ax-pill.hi {
+  background: linear-gradient(135deg, var(--ax-cyan), var(--ax-teal));
+  color: var(--ax-white);
+}
+.ax-empty {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--ax-mut);
+}
+.ax-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
+}
+.ax-row > .ax-field {
+  flex: 1 1 220px;
+}
+.ax-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ax-chip {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--ax-line);
+  background: var(--ax-white);
+  color: var(--ax-indigo);
+  cursor: pointer;
+}
+.ax-chip.on {
+  border-color: var(--ax-cyan);
+  background: #e5f5f9;
+  font-weight: 700;
+}
+.ax-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ax-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--ax-line);
+  border-radius: 10px;
+}
+.ax-list li .grow {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+.ax-list li small {
+  display: block;
+  color: var(--ax-mut);
+  overflow-wrap: anywhere;
+}
+.ax-hint {
+  font-size: 12px;
+  color: var(--ax-mut);
+}
