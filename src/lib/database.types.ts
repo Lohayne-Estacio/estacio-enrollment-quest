@@ -49,7 +49,20 @@ export type SimuladorResumo = {
   atingimento_pos_pct: number;
   faixa_pos: number;
   rvv_pos_multiplo: number;
+  conquistas: string[];
   updated_at: string;
+};
+
+/** Linha da função ranking_nucleo: nada financeiro. */
+export type LinhaRanking = {
+  posicao: number;
+  nome: string;
+  avatar_emoji: string | null;
+  faixa_grad: number;
+  atingimento_grad_pct: number;
+  conquistas: string[];
+  eu: boolean;
+  nucleo: string;
 };
 
 export type Database = {
@@ -63,7 +76,10 @@ export type Database = {
       simulador_resumo: Table<SimuladorResumo, "user_id" | "mes">;
     };
     Views: { [_ in never]: never };
-    Functions: { meus_papeis: { Args: Record<string, never>; Returns: AppRole[] } };
+    Functions: {
+      meus_papeis: { Args: Record<string, never>; Returns: AppRole[] };
+      ranking_nucleo: { Args: { _mes: string; _nucleo?: string }; Returns: LinhaRanking[] };
+    };
     Enums: { app_role: AppRole };
     CompositeTypes: { [_ in never]: never };
   };

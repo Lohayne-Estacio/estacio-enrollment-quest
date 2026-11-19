@@ -15,6 +15,7 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as EquipeRouteImport } from './routes/equipe'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NovaSenhaRouteImport } from './routes/nova-senha'
+import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +48,11 @@ const NovaSenhaRoute = NovaSenhaRouteImport.update({
   path: '/nova-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
   id: '/recuperar-senha',
   path: '/recuperar-senha',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/equipe': typeof EquipeRoute
   '/login': typeof LoginRoute
   '/nova-senha': typeof NovaSenhaRoute
+  '/ranking': typeof RankingRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/equipe': typeof EquipeRoute
   '/login': typeof LoginRoute
   '/nova-senha': typeof NovaSenhaRoute
+  '/ranking': typeof RankingRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/equipe': typeof EquipeRoute
   '/login': typeof LoginRoute
   '/nova-senha': typeof NovaSenhaRoute
+  '/ranking': typeof RankingRoute
   '/recuperar-senha': typeof RecuperarSenhaRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/login'
     | '/nova-senha'
+    | '/ranking'
     | '/recuperar-senha'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/login'
     | '/nova-senha'
+    | '/ranking'
     | '/recuperar-senha'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/login'
     | '/nova-senha'
+    | '/ranking'
     | '/recuperar-senha'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   EquipeRoute: typeof EquipeRoute
   LoginRoute: typeof LoginRoute
   NovaSenhaRoute: typeof NovaSenhaRoute
+  RankingRoute: typeof RankingRoute
   RecuperarSenhaRoute: typeof RecuperarSenhaRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NovaSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recuperar-senha': {
       id: '/recuperar-senha'
       path: '/recuperar-senha'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   EquipeRoute: EquipeRoute,
   LoginRoute: LoginRoute,
   NovaSenhaRoute: NovaSenhaRoute,
+  RankingRoute: RankingRoute,
   RecuperarSenhaRoute: RecuperarSenhaRoute,
 }
 export const routeTree = rootRouteImport

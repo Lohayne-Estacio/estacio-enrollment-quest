@@ -38,12 +38,22 @@ export function Restrito({
   return <>{children({ session, papeis })}</>;
 }
 
-export function TopoPainel({ email, admin }: { email?: string | undefined; admin: boolean }) {
+export function TopoPainel({
+  email,
+  admin,
+  equipe = true,
+}: {
+  email?: string | undefined;
+  admin: boolean;
+  /** Mostra o link da equipe (gestor/admin). */
+  equipe?: boolean;
+}) {
   return (
     <nav className="ax-bar" aria-label="Conta">
       <span className="who">{email}</span>
       <a href="/">🎮 Simulador</a>
-      <a href="/equipe">📊 Equipe</a>
+      <a href="/ranking">🏆 Ranking</a>
+      {equipe ? <a href="/equipe">📊 Equipe</a> : null}
       {admin ? <a href="/admin">🛠️ Admin</a> : null}
       <button type="button" onClick={() => void sair()}>
         Sair

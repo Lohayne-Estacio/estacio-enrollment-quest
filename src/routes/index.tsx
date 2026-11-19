@@ -169,6 +169,7 @@ function Index() {
     <>
       <nav className="ax-bar" aria-label="Conta">
         <span className="who">{carga.email}</span>
+        <a href="/ranking">🏆 Ranking</a>
         {temPapel(carga.papeis, "gestor", "admin") ? <a href="/equipe">📊 Equipe</a> : null}
         {temPapel(carga.papeis, "admin") ? <a href="/admin">🛠️ Admin</a> : null}
         <button type="button" onClick={() => void onSair()}>

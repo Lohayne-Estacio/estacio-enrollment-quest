@@ -1,5 +1,6 @@
 /* Resumo mensal que o gestor do núcleo enxerga (tabela simulador_resumo).
  * Mesmas contas do engine (calc/game), só com as regras de ./rules.ts. Não usa o salário-base. */
+import { calcConquistas } from "./conquistas";
 import { comm, PB, posBand } from "./rules";
 
 /** Valores do formulário como o engine salva (id do input → valor). */
@@ -28,6 +29,8 @@ export type Resumo = {
   atingimento_pos_pct: number;
   faixa_pos: number;
   rvv_pos_multiplo: number;
+  /** Selos sem valor financeiro, para o ranking do núcleo (ver conquistas.ts). */
+  conquistas: string[];
 };
 
 /** Igual ao `v()` do engine: número ≥ 0, vazio/inválido vira 0. */
@@ -74,5 +77,6 @@ export function calcResumo(c: Campos, mes: string): Resumo {
     atingimento_pos_pct: r2(pp),
     faixa_pos: pi,
     rvv_pos_multiplo: PB[pi]?.[1] ?? 0,
+    conquistas: calcConquistas(c),
   };
 }

@@ -121,7 +121,7 @@ describe("engine + adaptador", () => {
     const d = salvos.at(-1)!;
     expect(d.mes).toBe(mesAtual());
     expect(d.campos).toMatchObject({ m0: "0", r0: "0", nm: "0", nr: "0" });
-    expect(d.hist).toMatchObject({ "2000-01": {} });
+    expect(d["hist"]).toMatchObject({ "2000-01": {} });
   });
 
   it("zerar números grava no banco", async () => {

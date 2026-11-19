@@ -417,6 +417,80 @@ body:has(> .ax) {
   color: var(--ax-mut);
   overflow-wrap: anywhere;
 }
+/* Ranking do núcleo */
+.ax-rk-eu {
+  background: linear-gradient(135deg, var(--ax-cyan), var(--ax-teal));
+  color: var(--ax-white);
+  border: 0;
+}
+.ax-rk {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ax-rk li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--ax-white);
+  border: 1px solid var(--ax-line);
+  border-radius: 14px;
+}
+.ax-rk li.eu {
+  border: 2px solid var(--ax-cyan);
+  box-shadow: 0 4px 16px rgba(0, 154, 191, 0.18);
+}
+.ax-rk .pos {
+  flex: 0 0 34px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ax-indigo);
+}
+.ax-rk .av {
+  flex: 0 0 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ax-indigo);
+  color: var(--ax-white);
+  font-weight: 700;
+  font-size: 18px;
+}
+.ax-rk .who {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ax-rk .who b {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ax-rk .who small {
+  display: block;
+  color: var(--ax-mut);
+  font-size: 12px;
+}
+.ax-rk .sel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 3px;
+  font-size: 16px;
+  line-height: 1.2;
+}
+.ax-rk .pct {
+  flex: 0 0 auto;
+  font-weight: 800;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ax-cyan);
+}
 .ax-hint {
   font-size: 12px;
   color: var(--ax-mut);
