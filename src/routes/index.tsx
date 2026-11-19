@@ -6,7 +6,43 @@ import { AuthShell, Carregando, Msg } from "@/components/app/AuthShell";
 import { sair, temPapel, useSessao } from "@/lib/auth";
 import simCss from "@/simulador/simulador.css?url";
 import { SIMULADOR_MARKUP } from "@/simulador/markup";
-import { carregarSimulador, limparCacheLocal, type Carga } from "@/simulador/cloud";
+import { carregarSimulador, limparCacheLocal, mesAtual, type Carga } from "@/simulador/cloud";
+import { ModoBar } from "@/components/app/ModoBar";
+import { lerModo, type Modo } from "@/simulador/modo";
+import {
+  carregarSimulacao,
+  createSimStore,
+  listarSimulacoes,
+  semente,
+  type SimModoStore,
+  type SimulacaoResumo,
+} from "@/simulador/simulacoes";
+
+type ModoCarga = {
+  modo: Modo;
+  simId: string | null;
+  lista: SimulacaoResumo[];
+  simStore: SimModoStore | null;
+  avisos: string[];
+};
+
+/** Monta o modo pedido na URL. No modo simulação o engine recebe um store em memória. */
+async function prepararModo(c: Carga): Promise<ModoCarga> {
+  const { modo, simId } = lerModo(window.location.search);
+  if (modo === "registro") return { modo, simId: null, lista: [], simStore: null, avisos: [] };
+  const avisos: string[] = [];
+  const [lista, salva] = await Promise.all([
+    listarSimulacoes().catch(() => {
+      avisos.push("⚠️ Não foi possível carregar suas simulações salvas.");
+      return [] as SimulacaoResumo[];
+    }),
+    simId ? carregarSimulacao(simId).catch(() => null) : Promise.resolve(null),
+  ]);
+  if (simId && !salva)
+    avisos.push("🔎 Simulação não encontrada. Começando uma nova a partir do registro.");
+  const simStore = createSimStore(c.store, semente(c.store.dados(), mesAtual(), salva?.dados));
+  return { modo, simId: salva ? simId : null, lista, simStore, avisos };
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -66,6 +102,7 @@ function Index() {
   const nav = useNavigate();
   const { session, carregando } = useSessao();
   const [carga, setCarga] = useState<Carga | null>(null);
+  const [modo, setModo] = useState<ModoCarga | null>(null);
   const [erro, setErro] = useState("");
   const root = useRef<HTMLDivElement>(null);
   const toastRef = useRef<((t: string) => void) | null>(null);
@@ -90,9 +127,12 @@ function Index() {
         toastRef.current?.("🏢 Núcleo salvo na sua conta. Para trocar depois, fale com um admin.");
       },
     })
-      .then((c) => {
+      .then(async (c) => {
         admin = c.papeis.includes("admin");
-        if (vivo) setCarga(c);
+        const m = await prepararModo(c);
+        if (!vivo) return;
+        setModo(m);
+        setCarga(c);
       })
       .catch(
         () =>
@@ -108,18 +148,19 @@ function Index() {
 
   useEffect(() => {
     const el = root.current;
-    if (!carga || !el || el.dataset["init"]) return;
+    if (!carga || !modo || !el || el.dataset["init"]) return;
     el.dataset["init"] = "1";
     prepararNucleos(carga);
     void import("@/simulador/engine").then((m) => {
-      const api = m.initSimulador(carga.store);
+      const api = m.initSimulador(modo.simStore ?? carga.store);
       toastRef.current = api.toast;
       if (carga.migrou)
         api.toast("📦 Seus números deste aparelho foram importados para a sua conta.");
       if (carga.offline)
         api.toast("⚠️ Sem conexão: mostrando a última cópia salva neste aparelho.");
+      modo.avisos.forEach((t) => api.toast(t));
     });
-  }, [carga]);
+  }, [carga, modo]);
 
   // O engine registra listeners no document: entre telas usamos navegação completa (<a href>), nunca <Link>, para não iniciá-lo duas vezes.
   // Envia o que estiver pendente ao sair da aba e quando a internet volta.
@@ -163,11 +204,11 @@ function Index() {
         </div>
       </AuthShell>
     );
-  if (!session || !carga) return <Carregando texto="Carregando seu jogo…" />;
+  if (!session || !carga || !modo) return <Carregando texto="Carregando seu jogo…" />;
 
   return (
     <>
-      <nav className="ax-bar" aria-label="Conta">
+      <nav className={modo.modo === "sim" ? "ax-bar sim" : "ax-bar"} aria-label="Conta">
         <span className="who">{carga.email}</span>
         <a href="/ranking">🏆 Ranking</a>
         {temPapel(carga.papeis, "gestor", "admin") ? <a href="/equipe">📊 Equipe</a> : null}
@@ -176,6 +217,15 @@ function Index() {
           Sair
         </button>
       </nav>
+      <ModoBar
+        modo={modo.modo}
+        simId={modo.simId}
+        lista={modo.lista}
+        simStore={modo.simStore}
+        mes={mesAtual()}
+        antesDeSair={() => carga.store.flush()}
+        toast={(t) => toastRef.current?.(t)}
+      />
       <div ref={root} dangerouslySetInnerHTML={{ __html: SIMULADOR_MARKUP }} />
     </>
   );

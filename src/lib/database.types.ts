@@ -53,6 +53,16 @@ export type SimuladorResumo = {
   updated_at: string;
 };
 
+/** Simulação salva pelo consultor (privada). */
+export type SimulacaoRow = {
+  id: string;
+  user_id: string;
+  nome: string;
+  dados: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
 /** Linha da função ranking_nucleo: nada financeiro. */
 export type LinhaRanking = {
   posicao: number;
@@ -74,6 +84,7 @@ export type Database = {
       gestor_nucleos: Table<GestorNucleo, "gestor_id" | "nucleo">;
       simulador_estado: Table<SimuladorEstado, "user_id" | "mes">;
       simulador_resumo: Table<SimuladorResumo, "user_id" | "mes">;
+      simulacoes: Table<SimulacaoRow, "nome">;
     };
     Views: { [_ in never]: never };
     Functions: {
