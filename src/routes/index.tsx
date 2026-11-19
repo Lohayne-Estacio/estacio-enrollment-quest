@@ -1,23 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import simCss from "@/simulador/simulador.css?url";
+import { SIMULADOR_MARKUP } from "@/simulador/markup";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Simulador do Consultor – Modo Game" },
+      {
+        name: "description",
+        content:
+          "Simule sua RV de graduação e a RVV de pós, suba de nível e acompanhe missões. Para consultores comerciais Estácio da regional Centro Sul.",
+      },
+      { property: "og:title", content: "Simulador do Consultor – Modo Game" },
+      {
+        property: "og:description",
+        content: "Cada matrícula vira dinheiro na tela: níveis, missões, Radar do ganho e resumo para o 1:1.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "theme-color", content: "#262a4d" },
+    ],
+    links: [{ rel: "stylesheet", href: simCss }],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  const root = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = root.current;
+    if (!el || el.dataset["init"]) return;
+    el.dataset["init"] = "1";
+    void import("@/simulador/engine").then((m) => m.initSimulador());
+  }, []);
+
+  return <div ref={root} dangerouslySetInnerHTML={{ __html: SIMULADOR_MARKUP }} />;
 }

@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Simulador
+- `src/simulador/` is a near-verbatim port of the user's original HTML: `markup.ts` (screens), `simulador.css` (styles), `engine.ts` (imperative DOM logic, run once from `src/routes/index.tsx` after hydration). Keep edits minimal so behavior stays identical to the source file.
+- Calculation constants and `comm()` live only in `src/simulador/rules.ts`, covered by `rules.test.ts`; change rules there, never inline in the engine.
+- Tailwind preflight is intentionally not imported and `src/simulador` is excluded from Tailwind scanning (plus the `ring` candidate): the original CSS relies on browser defaults and its class names (e.g. `.ring`) collide with Tailwind utilities.

@@ -5,8 +5,13 @@
  *   build resolves @import from the filesystem. Load those with a <link> in the head() of
  *   src/routes/__root.tsx and name the family in a --font-* token in @theme inline below.
  */
-@import "tailwindcss" source(none);
+/* Preflight (CSS reset) is left out on purpose: the simulator CSS was written for browser defaults. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
 @source "../src";
+@source not "./simulador";
+@source not inline("ring");
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -74,20 +79,20 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --background: oklch(0.975 0.006 250);
+  --foreground: oklch(0.29 0.06 277);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.63 0.12 225);
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
   --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
+  --accent: oklch(0.68 0.1 200);
+  --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.929 0.013 255.508);
