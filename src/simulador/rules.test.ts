@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { band, comm, nucB, posBand, PB } from "./rules";
+import { band, comm, nucB, posBand, PB, proximaFaixa, prioridades } from "./rules";
 
 // mf = [Presencial, Semipresencial, Ao vivo, EAD, Med. Vet. Presencial/Odonto]
 const one = (i: number) => [0, 1, 2, 3, 4].map((k) => (k === i ? 1 : 0));
@@ -54,6 +54,29 @@ describe("RVV de pós (PGE.05.008)", () => {
     const mult = (p: number) => PB[posBand(p)]?.[1];
     expect([79.99, 80, 89.99, 90, 99.99, 100, 119.99, 120, 300].map(mult)).toEqual([
       0, 0.05, 0.05, 0.15, 0.15, 0.2, 0.2, 0.25, 0.25,
+    ]);
+  });
+});
+
+describe("Cap!GO – próxima faixa e prioridade", () => {
+  it("com meta 100 e 40 MF presenciais, faltam 10 MF para 50% e o ganho sai da tabela", () => {
+    const r = proximaFaixa([40, 0, 0, 0, 0], [100, 0, 0, 0, 0], 40, 100, 0);
+    // hoje: 40 × R$ 20 = 800; com 50 MF a 50%: 50 × R$ 40 = 2000
+    expect(r).toEqual({ alvo: 50, faltam: 10, atual: 800, depois: 2000, ganho: 1200 });
+  });
+  it("em 200% ou mais não existe próxima faixa (sem teto)", () => {
+    expect(proximaFaixa([200, 0, 0, 0, 0], [100, 0, 0, 0, 0], 200, 100, 0)).toBeNull();
+  });
+  it("sem meta não calcula próxima faixa", () => {
+    expect(proximaFaixa([0, 0, 0, 0, 0], [0, 0, 0, 0, 0], 0, 0, 0)).toBeNull();
+  });
+  it("prioriza a modalidade em aberto que paga mais por MF na faixa atual", () => {
+    const p = prioridades([5, 0, 0, 0, 2], [10, 10, 0, 10, 2], 3);
+    // Med. Vet./Odonto já batida; Presencial R$ 80 > Semi R$ 60 > EAD R$ 35
+    expect(p.map((o) => [o.nome, o.faltam, o.valorMF])).toEqual([
+      ["Presencial", 5, 80],
+      ["Semipresencial", 10, 60],
+      ["EAD", 10, 35],
     ]);
   });
 });

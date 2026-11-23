@@ -1,7 +1,7 @@
 // @ts-nocheck
-/* Lógica original do arquivo Simulador_do_consultor_modo_game_4.html, sem alterações de regra.
- * Só as constantes de cálculo foram movidas para ./rules.ts para poderem ser testadas. */
-import { P_MES, P_CICLO, NUC_BONUS, NUC_BONUS1, TH, VAL, LV, FAIXA, band, nucB, comm, PB, PL } from "./rules";
+/* Lógica do arquivo original Simulador_do_consultor_modo_game_4.html, sem alterações de regra.
+ * As constantes de cálculo e as contas do painel "Meu GO" do Cap!GO ficam em ./rules.ts, cobertas por testes. */
+import { P_MES, P_CICLO, NUC_BONUS, NUC_BONUS1, TH, VAL, LV, FAIXA, band, nucB, comm, PB, PL, proximaFaixa, prioridades } from "./rules";
 
 /* `store`: adaptador de persistência (./persistence.ts), mesma API do `ls` original + del/flush.
  * Sem store, o engine usa o localStorage como no arquivo original. */
@@ -229,12 +229,28 @@ function game(d,tm,tr,du,dec){
   const a1=comm(mt6,100,nuc),z2=comm(mt6.map(x=>x*2),200,nuc),n2=mt6.reduce((s,x)=>s+x*2,0);
   $('p200').innerHTML=tm?`<b>Benefícios de chegar aos 200%:</b><br>• Faixa mais alta da tabela de referência: Presencial ${brl(VAL[6][0])}* por MF, contra ${brl(VAL[3][0])}* em 100%.<br>• Sem teto: depois dos 200%, cada MF continua somando.<br>• Sua entrega ajuda o núcleo a bater a meta, que libera +5% (núcleo em 100%) ou +10% (110%) sobre a sua comissão.<br>Com a sua meta atual, 200% seriam <b>${n2} MF</b>: estimativa de <b>${brl(z2.tot)}*</b> (${brl(z2.mes)}* de antecipação + ${brl(z2.ciclo)}* de saldo), contra <b>${brl(a1.tot)}*</b> em 100%.`:'Preencha a sua meta para ver a simulação dos 200%.';
 
+  goPanel({tm,tr,p,b,c,tot,rvvV,mf,mt6,nuc,nm,rem});
   feedback({tm,tr,p,b,c,mf,mt6,pm,pp,cp,du,dec,rem,falta,nuc,nm,nr,pM,pR,pp2,mult});
   /* RVV detalhe */
   let nxt='';if(pM&&pi<4){const t=PB[pi+1][0],need=Math.max(Math.ceil(t/100*pM-pR),1);nxt=`Faltam <b>${need} MF</b> de pós para a faixa de ${t}% (múltiplo ${fm(PB[pi+1][1])}${sal?`, estimativa de ${brl(PB[pi+1][1]*sal)}*`:''}).`}
   $('rvv').innerHTML=`<b>🎓 RVV de pós-graduação*</b> <span class='chipst ok'>PGE.05.008 · Tabela 1</span><p style='margin:6px 0;font-size:14px'>Atingimento de pós (Presencial + 4.0 + EAD): <b>${pM?pc(pp2):'–'}</b> · Múltiplo do salário: <b>${fm(mult)}</b></p><div class='wres'>${sal?`Estimativa: ${fm(mult)} × ${brl(sal)} = <b>${brl(rvvV)}*</b>`:'Informe o salário base em “Meus números” para ver a estimativa em reais.'}</div><p class='hint'>${nxt||(pM?'Faixa mais alta da tabela de referência.':'Preencha a meta de pós para começar.')} Estimativa, sem garantia: vale a política oficial.</p><div class='wrap'><table><tr><th>Faixa de atingimento</th><th>Múltiplo do salário</th></tr>${PL.map((l,i)=>`<tr${i===pi&&pM?` class='here'`:''}><td>${l}</td><td>${fm(PB[i][1])}</td></tr>`).join('')}</table></div>`;
 }
 
+
+/* ===== Cap!GO: as 5 perguntas do consultor ===== */
+function goPanel(x){const {tm,tr,p,b,c,tot,rvvV,mf,mt6,nuc,nm,rem}=x,el=$('goGrid');if(!el)return;
+  const q=(n,t,val,cls,body)=>`<div class='go ${cls||''}'><div class='gq'><span>${n}</span>${t}</div>${val}${body}</div>`;
+  if(!tm){el.innerHTML=q(1,'Quanto eu já conquistei?',`<b class='gv gt num'>${brl(tot+rvvV)}*</b>`,'q1 wide',`<p>Defina sua meta e o Cap!GO responde, a cada acesso: quanto você já conquistou, onde está, o que falta para avançar, quanto pode ganhar a mais e o que priorizar agora.</p><button type='button' class='gocta' id='goCta'>🎯 Definir minha meta</button>`);return}
+  const nx=proximaFaixa(mf,mt6,tr,tm,nuc),pr=prioridades(mf,mt6,b),top=pr[0];
+  const c1=q(1,'Quanto eu já conquistei?',`<b class='gv gt num'>${brl(tot+rvvV)}*</b>`,'q1',`<p>RV de graduação <b>${brl(tot)}*</b>${rvvV?` + RVV de pós <b>${brl(rvvV)}*</b>`:''}</p><div class='gsplit'><span>💰 Antecipação 60% <b>${brl(c.mes)}*</b></span><span>🏦 Saldo 40% <b>${brl(c.ciclo)}*</b></span></div>`);
+  const c2=q(2,'Onde estou na minha jornada?',`<b class='gv gt num'>${pc(p)}</b>`,'',`<p><b>${f(tr)}</b> de <b>${f(tm)}</b> MF · faixa <b>${FAIXA[b]}</b></p><div class='gfx' aria-hidden='true'>${FAIXA.map((l,i)=>`<i class='${i<b?'pass':i===b?'here':''}'></i>`).join('')}</div><p class='s'>${LV[b][0]} Nível ${b+1}/7 · ${LV[b][1]}</p>`);
+  const c3=nx?q(3,'O que falta para avançar?',`<b class='gv gt num'>${nx.faltam} MF</b>`,'',`<p>para chegar a <b>${nx.alvo}%</b>, faixa ${FAIXA[b+1]}${rem>0?` · cerca de <b>${f(nx.faltam/rem)} MF/dia</b> nos ${rem} dias úteis restantes`:''}</p>`)
+    :q(3,'O que falta para avançar?',`<b class='gv gt'>Faixa máxima</b>`,'',`<p>Você está em 200% ou mais. Sem teto: cada MF continua somando.</p>`);
+  const c4=nx?q(4,'Quanto posso ganhar a mais?',`<b class='gv gt num'>+${brl(nx.ganho)}*</b>`,'q4',`<p>Ao chegar a ${nx.alvo}%, sua estimativa vai de <b>${brl(nx.atual)}*</b> para <b>${brl(nx.depois)}*</b>.</p>`)
+    :q(4,'Quanto posso ganhar a mais?',`<b class='gv gt num'>+${brl(VAL[6][0])}*</b>`,'q4',`<p>por MF de Presencial na faixa mais alta.${p>=100&&nm&&nuc<110?' Com o núcleo em 110% ou mais, o bônus vai a +10%.':''}</p>`);
+  const c5=top?q(5,'O que devo priorizar agora?',`<b class='gv gt'>${top.i===0?'⭐ ':''}${top.nome}</b>`,'',`<p><b>${brl(top.valorMF)}*</b> por MF na sua faixa · faltam <b>${top.faltam}</b> · até <b>+${brl(top.potencial)}*</b></p>${pr.length>1?`<p class='s'>Depois: ${pr.slice(1,3).map(o=>`${o.nome} (${brl(o.valorMF)}*/MF)`).join(' · ')}</p>`:''}<p class='s'>⭐ Presencial é o foco do núcleo. Ofereça sempre o curso mais adequado ao perfil do aluno.</p>`)
+    :q(5,'O que devo priorizar agora?',`<b class='gv gt'>Meta batida ✔</b>`,'',`<p>Todas as modalidades com meta foram batidas. Agora cada MF soma no excedente.</p>`);
+  el.innerHTML=c1+c2+c3+c4+c5}
 
 /* ===== Radar do ganho: feedback em R$ ===== */
 function mixAdd(mf,mt,extra){const s0=mf.reduce((a,x)=>a+x,0),w=s0>0?mf:mt,ws=w.reduce((a,x)=>a+x,0);if(!ws){const r=mf.slice();r[0]+=extra;return r}return mf.map((x,i)=>x+extra*w[i]/ws)}
@@ -465,7 +481,7 @@ $('obBack').addEventListener('click',()=>{if(obStep>0)obShow(obStep-1)});
 $('obSkip').addEventListener('click',()=>obClose(false));
 $('obDemo').addEventListener('click',e=>{ac();kaching();floatTxt('+R$ 80,00',e.target.getBoundingClientRect())});
 $('howto').addEventListener('click',()=>{ac();obOpen()});
-document.addEventListener('click',e=>{if(e.target.closest('#lvCta')){ac();obOpen();obShow(1)}});
+document.addEventListener('click',e=>{if(e.target.closest('#lvCta,#goCta')){ac();obOpen();obShow(1)}});
 ['obNome','obNuc','obM0','obM1','obM2','obM3'].forEach(id=>$(id).addEventListener('input',ev=>ev.stopPropagation()));
 renderStart();
 if(!ls.get('sim-onb'))setTimeout(obOpen,400);

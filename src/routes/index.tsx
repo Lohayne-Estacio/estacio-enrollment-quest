@@ -5,6 +5,7 @@ import axCss from "@/app/app.css?url";
 import { AuthShell, Carregando, Msg } from "@/components/app/AuthShell";
 import { sair, temPapel, useSessao } from "@/lib/auth";
 import simCss from "@/simulador/simulador.css?url";
+import capgoCss from "@/simulador/capgo.css?url";
 import { SIMULADOR_MARKUP } from "@/simulador/markup";
 import { carregarSimulador, limparCacheLocal, mesAtual, type Carga } from "@/simulador/cloud";
 import { ModoBar } from "@/components/app/ModoBar";
@@ -47,24 +48,24 @@ async function prepararModo(c: Carga): Promise<ModoCarga> {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Simulador do Consultor – Modo Game" },
+      { title: "Cap!GO – Simulador do Consultor" },
       {
         name: "description",
         content:
           "Simule sua RV de graduação e a RVV de pós, suba de nível e acompanhe missões. Para consultores comerciais Estácio da regional Centro Sul.",
       },
-      { property: "og:title", content: "Simulador do Consultor – Modo Game" },
+      { property: "og:title", content: "Cap!GO – Simulador do Consultor" },
       {
         property: "og:description",
-        content:
-          "Cada matrícula vira dinheiro na tela: níveis, missões, Radar do ganho e resumo para o 1:1.",
+        content: "Entendeu a faixa. Entendeu o ganho. Veja quanto já conquistou, o que falta para a próxima faixa e o que priorizar.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#262a4d" },
+      { name: "theme-color", content: "#25294e" },
     ],
     links: [
       { rel: "stylesheet", href: simCss },
+      { rel: "stylesheet", href: capgoCss },
       { rel: "stylesheet", href: axCss },
     ],
   }),

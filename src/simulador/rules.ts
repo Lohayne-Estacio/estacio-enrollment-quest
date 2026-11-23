@@ -59,3 +59,42 @@ export const PL = ["Abaixo de 80%", "80 a 89,99%", "90 a 99,99%", "100 a 119,99%
 
 /** Índice da faixa de pós para um atingimento em %. */
 export const posBand = (p: number) => PB.reduce((k, x, i) => (p >= x[0] ? i : k), 0);
+
+export const MODV_NOMES = ["Presencial", "Semipresencial", "Ao vivo", "EAD", "Med. Vet. / Odonto"];
+
+/** Distribui MF extras no mix atual (ou no mix da meta, se nada foi realizado). Igual ao motor original. */
+export function mixAdd(mf: number[], mt: number[], extra: number) {
+  const s0 = mf.reduce((a, x) => a + x, 0),
+    w = s0 > 0 ? mf : mt,
+    ws = w.reduce((a, x) => a + x, 0);
+  if (!ws) {
+    const r = mf.slice();
+    r[0] = (r[0] ?? 0) + extra;
+    return r;
+  }
+  return mf.map((x, i) => x + (extra * (w[i] ?? 0)) / ws);
+}
+
+/** Cap!GO – "O que falta para avançar?" e "Quanto posso ganhar a mais?": MF até a próxima faixa e o ganho estimado. */
+export function proximaFaixa(mf: number[], mt: number[], tr: number, tm: number, nuc: number) {
+  if (!tm) return null;
+  const p = (tr / tm) * 100,
+    atual = comm(mf, p, nuc);
+  if (atual.b >= TH.length - 1) return null;
+  const alvo = TH[atual.b + 1] ?? 0,
+    faltam = Math.max(Math.ceil((alvo / 100) * tm - tr), 1),
+    depois = comm(mixAdd(mf, mt, faltam), ((tr + faltam) / tm) * 100, nuc);
+  return { alvo, faltam, atual: atual.tot, depois: depois.tot, ganho: depois.tot - atual.tot };
+}
+
+/** Cap!GO – "O que devo priorizar agora?": modalidades com meta em aberto, da que mais paga por MF na faixa atual para a que menos paga. */
+export function prioridades(mf: number[], mt: number[], b: number) {
+  return mt
+    .map((m, i) => {
+      const faltam = Math.max(Math.ceil(m - (mf[i] ?? 0)), 0),
+        valorMF = VAL[b]?.[i] ?? 0;
+      return { i, nome: MODV_NOMES[i] ?? "", faltam, valorMF, potencial: faltam * valorMF };
+    })
+    .filter((o) => o.faltam > 0)
+    .sort((a, z) => z.valorMF - a.valorMF || z.potencial - a.potencial);
+}
