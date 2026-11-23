@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
 import simCss from "@/simulador/simulador.css?url";
+import capgoCss from "@/simulador/capgo.css?url";
 import { SIMULADOR_MARKUP } from "@/simulador/markup";
 
 export const Route = createFileRoute("/")({
@@ -16,13 +17,16 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Cap!GO – Simulador do Consultor" },
       {
         property: "og:description",
-        content: "Cada matrícula vira dinheiro na tela: níveis, missões, Radar do ganho e resumo para o 1:1.",
+        content: "Entendeu a faixa. Entendeu o ganho. Veja quanto já conquistou, o que falta para a próxima faixa e o que priorizar.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#262a4d" },
+      { name: "theme-color", content: "#25294e" },
     ],
-    links: [{ rel: "stylesheet", href: simCss }],
+    links: [
+      { rel: "stylesheet", href: simCss },
+      { rel: "stylesheet", href: capgoCss },
+    ],
   }),
   component: Index,
 });

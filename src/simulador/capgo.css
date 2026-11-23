@@ -1,0 +1,88 @@
+/* Identidade visual Cap!GO (briefing + apresentação à diretoria).
+ * Carregado depois de simulador.css: só sobrepõe cores, tipografia e o painel "Meu GO". */
+:root{
+--cyan:#00b9c5;--turq:#2ccfd8;--indigo:#25294e;--navy2:#1b1e3c;--gold:#e4b857;--goldd:#8a5d0b;--goldbg:#fff6e0;
+--bg:#f3f5f9;--soft:#f2f4f8;--line:#e2e6ef;--fg:#25294e;--mut:#5f6486;
+--ok:#00808a;--okbg:#e2f7f8;--cybg:#e2f7f8;--cyd:#008c96;
+--sh:0 1px 2px rgba(37,41,78,.05),0 10px 26px -14px rgba(37,41,78,.22)}
+body{font-family:"Mulish","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+background:radial-gradient(900px 420px at 100% -5%,rgba(0,185,197,.10),transparent 60%),radial-gradient(700px 420px at -10% 40%,rgba(37,41,78,.05),transparent 60%),var(--bg);background-attachment:fixed}
+.gt,h2,.pt,.mt,.cglogo,.lvup .t,.obs h3,.leg strong,.top .p,.big{font-family:"Montserrat","Segoe UI",system-ui,sans-serif}
+.gt{font-style:normal;font-weight:800;letter-spacing:-.4px}
+.leg strong,.top .p,.big,.obs h3,.lvup .t,.flt{font-style:normal}
+.pname{font-family:"Montserrat","Segoe UI",system-ui,sans-serif!important;font-weight:800!important;background-image:linear-gradient(90deg,#fff 0%,#fff 50%,#9eeef2 100%)}
+
+/* Barra da marca */
+.cgbar{display:flex;align-items:center;gap:12px;padding:4px 4px 12px}
+.cgmark{height:44px;width:auto;flex:none}
+.cgtx{min-width:0}
+.cglogo{font-size:26px;font-weight:800;line-height:1;letter-spacing:.2px;color:var(--indigo)}
+.cglogo b{color:var(--cyan)}
+.cgtx small{display:block;margin-top:3px;font-size:12px;color:var(--mut)}
+.cgtx small b{color:var(--indigo)}
+.cgorg{margin-left:auto;text-align:right;font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut);line-height:1.5;border-left:3px solid var(--gold);padding-left:10px}
+
+/* Hero */
+.hero{background:radial-gradient(520px 260px at 92% 0%,rgba(0,185,197,.32),transparent 60%),radial-gradient(420px 240px at 0% 110%,rgba(228,184,87,.12),transparent 60%),linear-gradient(140deg,var(--indigo),var(--navy2))}
+.mascot{width:150px;filter:none}
+.tagu::before{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.lvl small,.lvl p b{color:#86e8ee}
+.emb{background:linear-gradient(145deg,var(--cyan),var(--turq))}
+.credit b,.credit-m b{color:var(--gold)}
+
+/* Títulos de seção: barra azul-marinho com círculo turquesa (motivo da apresentação) */
+h2{background:var(--indigo);color:#fff;border-radius:14px;padding:7px 14px 7px 7px;font-size:16px;letter-spacing:.2px;text-transform:none}
+h2 span.i{width:34px;height:34px;border-radius:50%;background:var(--cyan);border:0;font-size:17px}
+h2 .cnt{border:0}
+
+/* Botões de ação: turquesa com texto azul-marinho (contraste) */
+.qk,.plus[data-d="1"],.avphoto,.lvcta,.obdemo{color:var(--indigo)}
+.qk{background:var(--cyan);box-shadow:0 3px 0 var(--cyd)}
+.qk:hover{background:#19c6d1}
+.qk:active{box-shadow:0 0 0 var(--cyd)}
+.qk.star{background:var(--indigo);color:#fff;box-shadow:0 3px 0 #11132a}
+.zbtn.sum{box-shadow:0 3px 0 var(--cyd)}
+.lvcta{background:var(--cyan);box-shadow:0 4px 0 var(--cyd)}
+.tabs a:hover{border-color:var(--cyan);color:var(--ok)}
+.btn:hover{border-color:var(--cyan);color:var(--ok)}
+.ped summary{color:var(--ok)}
+
+/* Conquistas e premiações em dourado */
+.bdg.on{border-color:var(--gold);background:linear-gradient(180deg,var(--goldbg),#fff);box-shadow:0 4px 14px -8px rgba(228,184,87,.8)}
+.pnl.win{border-color:var(--gold);box-shadow:0 0 0 3px rgba(228,184,87,.2),var(--sh)}
+.pnl.win::before{background:linear-gradient(90deg,var(--gold),#f3d48e)}
+.ms.done::after{background:var(--gold);color:var(--indigo)}
+.lvup{border:2px solid var(--gold)}
+.lvup .k{color:var(--gold)}
+.rain .usd{color:var(--gold)}
+.lvph{box-shadow:0 0 0 4px #fff,0 0 0 8px var(--gold),0 0 30px rgba(228,184,87,.7)}
+.sticky{background:linear-gradient(var(--bg) 72%,rgba(243,245,249,0))}
+
+/* Painel Meu GO: as 5 perguntas */
+.gogrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.go{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:6px}
+.go.wide{grid-column:1/-1}
+.gq{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--mut);letter-spacing:.2px}
+.gq span{width:24px;height:24px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--cyan);color:var(--indigo);font:800 12px "Montserrat",system-ui,sans-serif}
+.gv{font-size:26px;line-height:1.1;color:var(--indigo);overflow-wrap:anywhere}
+.go p{margin:0;font-size:13px;color:var(--fg)}
+.go p.s{color:var(--mut);font-size:12px}
+.go.q1{background:linear-gradient(140deg,var(--indigo),var(--navy2));border:0;color:#fff}
+.go.q1 .gq{color:#c9cde8}.go.q1 .gv{color:var(--gold)}.go.q1 p{color:#dfe3f7}.go.q1 p b{color:#fff}
+.gsplit{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.gsplit span{font-size:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:5px 8px;color:#dfe3f7}
+.gsplit b{color:#fff;white-space:nowrap}
+.go.q4{background:var(--goldbg);border-color:#f0d9a0}
+.go.q4 .gv{color:var(--goldd)}
+.gfx{display:flex;gap:3px;margin:2px 0}
+.gfx i{flex:1;height:8px;border-radius:4px;background:#e3e7f0}
+.gfx i.pass{background:var(--cyan)}.gfx i.here{background:var(--indigo)}
+.gocta{align-self:flex-start;border:0;border-radius:12px;padding:11px 16px;margin-top:4px;background:var(--gold);color:var(--indigo);font-weight:800;font-size:14px;box-shadow:0 3px 0 #b8892a;cursor:pointer}
+.gocta:active{transform:translateY(3px);box-shadow:none}
+
+@media (max-width:600px){
+.cgbar{padding:0 2px 10px;gap:10px}.cgmark{height:36px}.cglogo{font-size:22px}.cgorg{display:none}
+.hero .mwrap{display:none}
+h2{font-size:15px}
+.gogrid{grid-template-columns:minmax(0,1fr)}
+.gv{font-size:24px}}
