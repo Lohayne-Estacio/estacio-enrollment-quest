@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Simulador do Consultor – Modo Game" },
+      { title: "Cap!GO – Simulador do Consultor" },
       { name: "description", content: "Simulador não oficial de RV para consultores comerciais Estácio, regional Centro Sul." },
       { name: "author", content: "Núcleo SP Interior" },
-      { property: "og:title", content: "Simulador do Consultor – Modo Game" },
+      { property: "og:title", content: "Cap!GO – Simulador do Consultor" },
       { property: "og:description", content: "Simulador não oficial de RV para consultores comerciais Estácio, regional Centro Sul." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -7,13 +7,13 @@ import { SIMULADOR_MARKUP } from "@/simulador/markup";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Simulador do Consultor – Modo Game" },
+      { title: "Cap!GO – Simulador do Consultor" },
       {
         name: "description",
         content:
           "Simule sua RV de graduação e a RVV de pós, suba de nível e acompanhe missões. Para consultores comerciais Estácio da regional Centro Sul.",
       },
-      { property: "og:title", content: "Simulador do Consultor – Modo Game" },
+      { property: "og:title", content: "Cap!GO – Simulador do Consultor" },
       {
         property: "og:description",
         content: "Cada matrícula vira dinheiro na tela: níveis, missões, Radar do ganho e resumo para o 1:1.",
