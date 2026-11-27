@@ -4,10 +4,16 @@ import { useEffect, useState, type FormEvent } from "react";
 import axCss from "@/app/app.css?url";
 import { AuthShell, Msg } from "@/components/app/AuthShell";
 import { emailPermitido, MSG_DOMINIO, origem, SENHA_MIN, traduzErro } from "@/lib/auth";
+import { lerConvite, PAPEL_ROTULO } from "@/lib/convites";
+import type { AppRole } from "@/lib/database.types";
 import { listarNucleos, NUCLEOS_RESERVA } from "@/lib/nucleos";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/cadastro")({
+  validateSearch: (s: Record<string, unknown>): { convite?: string } => {
+    const convite = lerConvite(s["convite"]);
+    return convite ? { convite } : {};
+  },
   head: () => ({
     meta: [{ title: "Criar conta · Simulador do Consultor" }],
     links: [{ rel: "stylesheet", href: axCss }],
@@ -15,7 +21,11 @@ export const Route = createFileRoute("/cadastro")({
   component: Cadastro,
 });
 
+type InfoConvite = { role: AppRole; email: string | null; valido: boolean } | "invalido";
+
 function Cadastro() {
+  const { convite } = Route.useSearch();
+  const [info, setInfo] = useState<InfoConvite | null>(null);
   const [nucleos, setNucleos] = useState<string[]>(NUCLEOS_RESERVA);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -30,6 +40,22 @@ function Cadastro() {
     void listarNucleos().then(setNucleos);
   }, []);
 
+  useEffect(() => {
+    if (!convite) return;
+    let vivo = true;
+    void supabase.rpc("ver_convite", { _id: convite }).then(({ data }) => {
+      if (!vivo) return;
+      const c = data?.[0];
+      setInfo(c ?? "invalido");
+      if (c?.valido && c.email) setEmail(c.email);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [convite]);
+
+  const conviteOk = info && info !== "invalido" && info.valido ? info : null;
+
   async function cadastrar(e: FormEvent) {
     e.preventDefault();
     setErro("");
@@ -40,11 +66,16 @@ function Cadastro() {
       return setErro(`A senha precisa ter pelo menos ${SENHA_MIN} caracteres.`);
     if (senha !== senha2) return setErro("As senhas não são iguais.");
     if (!nucleo) return setErro("Escolha o seu núcleo.");
+    if (conviteOk?.email && conviteOk.email !== em)
+      return setErro(`Este convite é para ${conviteOk.email}.`);
     setEnviando(true);
     const { error } = await supabase.auth.signUp({
       email: em,
       password: senha,
-      options: { data: { nome: nome.trim(), nucleo }, emailRedirectTo: `${origem()}/login` },
+      options: {
+        data: { nome: nome.trim(), nucleo, ...(conviteOk && convite ? { convite } : {}) },
+        emailRedirectTo: `${origem()}/login`,
+      },
     });
     setEnviando(false);
     if (error) return setErro(traduzErro(error));
@@ -70,6 +101,17 @@ function Cadastro() {
 
   return (
     <AuthShell title="Criar conta" sub="Só para e-mails @estacio.br e @yduqs.com.br.">
+      {conviteOk ? (
+        <Msg kind="ok">
+          Você foi convidado(a) com o perfil <b>{PAPEL_ROTULO[conviteOk.role]}</b>. O acesso é
+          liberado assim que você confirmar o e-mail.
+        </Msg>
+      ) : convite && info ? (
+        <Msg kind="err">
+          Este convite expirou, já foi usado ou foi cancelado. Você ainda pode criar a conta como
+          consultor; peça um novo convite a um admin se precisar de outro acesso.
+        </Msg>
+      ) : null}
       <form className="ax-form" onSubmit={cadastrar} noValidate>
         <label className="ax-field">
           Nome
@@ -92,6 +134,7 @@ function Cadastro() {
             placeholder="nome@estacio.br"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            readOnly={!!conviteOk?.email}
             required
           />
         </label>

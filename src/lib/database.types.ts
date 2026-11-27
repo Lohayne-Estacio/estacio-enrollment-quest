@@ -63,6 +63,19 @@ export type SimulacaoRow = {
   updated_at: string;
 };
 
+/** Convite de cadastro: o papel é aplicado quando a pessoa confirma o e-mail. */
+export type Convite = {
+  id: string;
+  role: AppRole;
+  email: string | null;
+  expira_em: string;
+  criado_por: string | null;
+  created_at: string;
+  usado_por: string | null;
+  usado_em: string | null;
+  revogado: boolean;
+};
+
 /** Linha da função ranking_nucleo: nada financeiro. */
 export type LinhaRanking = {
   posicao: number;
@@ -85,10 +98,15 @@ export type Database = {
       simulador_estado: Table<SimuladorEstado, "user_id" | "mes">;
       simulador_resumo: Table<SimuladorResumo, "user_id" | "mes">;
       simulacoes: Table<SimulacaoRow, "nome">;
+      convites: Table<Convite, "role">;
     };
     Views: { [_ in never]: never };
     Functions: {
       meus_papeis: { Args: Record<string, never>; Returns: AppRole[] };
+      ver_convite: {
+        Args: { _id: string };
+        Returns: { role: AppRole; email: string | null; valido: boolean }[];
+      };
       ranking_nucleo: { Args: { _mes: string; _nucleo?: string }; Returns: LinhaRanking[] };
     };
     Enums: { app_role: AppRole };

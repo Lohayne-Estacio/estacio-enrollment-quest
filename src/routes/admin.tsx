@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import axCss from "@/app/app.css?url";
 import { Msg } from "@/components/app/AuthShell";
 import { Restrito, TopoPainel } from "@/components/app/Restrito";
+import { Convites } from "@/components/app/Convites";
 import type { AppRole, Profile } from "@/lib/database.types";
 import { listarNucleos } from "@/lib/nucleos";
 import { supabase } from "@/lib/supabase";
@@ -140,6 +141,8 @@ function Admin({ uid, email }: { uid: string; email?: string | undefined }) {
             )
           ) : null}
         </section>
+
+        <Convites />
 
         {sel ? (
           <Usuario
